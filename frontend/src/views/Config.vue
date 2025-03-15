@@ -63,7 +63,7 @@
                 <n-input-number
                   v-model:value="formData.geoip_fetch_interval"
                   :min="3600"
-                  :max="604800"
+                  :max="2592000"
                   placeholder="请输入GeoIP更新间隔"
                 />
               </n-form-item>
