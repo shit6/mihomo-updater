@@ -1,0 +1,18 @@
+fetch_url: "https://mahoushaojiu.ruan.day/sub/0a97acae18076274/clash"
+fetch_interval: 3600
+# GeoIP独立的更新配置
+geoip_fetch_interval: 86400  # 24小时更新一次
+geoip_url: "https://github.com/MetaCubeX/meta-rules-dat/releases/latest/download/geoip.dat"
+geosite_url: "https://github.com/MetaCubeX/meta-rules-dat/releases/latest/download/geosite.dat"
+mmdb_url: "https://github.com/MetaCubeX/meta-rules-dat/releases/latest/download/country.mmdb"
+# Mihomo配置
+mihomo_config_path: "/etc/mihomo/config.yaml"
+backup_dir: "/etc/mihomo/backups"
+geoip_path: "/etc/mihomo/geoip.dat"
+geosite_path: "/etc/mihomo/geosite.dat"
+mmdb_path: "/etc/mihomo/country.mmdb"
+# 前端访问配置
+yacd_url: "http://192.168.3.110:8080"
+clash_api_url: "http://192.168.3.110:9097"
+# 服务端口配置
+web_port: 5000 

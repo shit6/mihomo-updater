@@ -1,0 +1,16 @@
+log-level: info
+mode: rule
+port: 7890
+proxies:
+- name: test_proxy
+  port: 8080
+  server: example.com
+  type: http
+proxy-groups:
+- name: PROXY
+  proxies:
+  - test_proxy
+  type: select
+rules:
+- DOMAIN-SUFFIX,google.com,PROXY
+- MATCH,DIRECT

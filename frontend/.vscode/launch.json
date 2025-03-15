@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "对本地启动Chrome调试",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMapPathOverrides": {
+                "/@fs/*": "${workspaceFolder}/*"
+            },
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-user-data",
+            "sourceMaps": true
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "对远程地址启动Chrome调试",
+            "url": "http://${input:remoteHost}:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMapPathOverrides": {
+                "/@fs/*": "${workspaceFolder}/*"
+            },
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-user-data",
+            "sourceMaps": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "remoteHost",
+            "type": "promptString",
+            "description": "远程主机IP地址",
+            "default": "localhost"
+        }
+    ]
+}
