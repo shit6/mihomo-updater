@@ -81,7 +81,7 @@ pnpm-debug.log*
 
 # 构建输出
 /dist/
-/build/
+
 
 # 本地配置文件
 .env.local

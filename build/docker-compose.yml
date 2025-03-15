@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  backend:
+    image: mihomo-updater-backend:latest
+    container_name: mihomo-updater-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${MIHOMO_DATA_DIR:-./data}:/config
+      - ${MIHOMO_DATA_DIR:-./data}:/app/logs
+      - ${MIHOMO_DATA_DIR:-./data}:/etc/mihomo/data
+      - ${MIHOMO_CONFIG_FILE:-/etc/mihomo/config.yaml}:/etc/mihomo/config.yaml
+      - ${MIHOMO_GEOIP_FILE:-/etc/mihomo/geoip.dat}:/etc/mihomo/geoip.dat
+      - ${MIHOMO_GEOSITE_FILE:-/etc/mihomo/geosite.dat}:/etc/mihomo/geosite.dat
+      - ${MIHOMO_COUNTRY_FILE:-/etc/mihomo/country.mmdb}:/etc/mihomo/country.mmdb
+    networks:
+      - mihomo-network
+
+  frontend:
+    image: mihomo-updater-frontend:latest
+    container_name: mihomo-updater-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - mihomo-network
+      
+  yacd:
+    image: haishanh/yacd:latest
+    container_name: mihomo-yacd
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - mihomo-network
+
+networks:
+  mihomo-network:
+    driver: bridge
+
+volumes:
+  mihomo_persistent_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MIHOMO_DATA_DIR:-./data}
+
+# 首次构建镜像：
+# docker-compose -f docker-compose.build.yml build
+# 然后可以将此文件移动到任何位置并启动：
+# MIHOMO_DATA_DIR=/path/to/data docker-compose up -d 
