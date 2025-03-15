@@ -3,12 +3,18 @@ version: '3.8'
 services:
   backend:
     build: 
-      context: ../backend
-      dockerfile: ../build/docker/backend/Dockerfile
+      context: ..
+      dockerfile: build/docker/backend/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - DOCKER_BUILDKIT=1
     image: mihomo-updater-backend:latest
 
   frontend:
     build: 
-      context: ../frontend
-      dockerfile: ../build/docker/frontend/Dockerfile
+      context: ..
+      dockerfile: build/docker/frontend/Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - DOCKER_BUILDKIT=1
     image: mihomo-updater-frontend:latest 

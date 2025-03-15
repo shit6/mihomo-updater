@@ -17,20 +17,66 @@
 
 ## 安装方法
 
-### 系统要求
+### 使用Docker部署（推荐）
+
+推荐使用Docker部署，支持两种方式：
+
+#### 方式一：在项目目录中构建并运行
+
+```bash
+# 克隆仓库并进入项目目录
+git clone https://github.com/zztdandan/mihomo-updater.git
+cd mihomo-updater
+
+# 构建镜像
+docker-compose -f build/docker-compose.build.yml build
+
+# 启动服务
+docker-compose -f build/docker-compose.yml up -d
+```
+
+#### 方式二：在任意目录运行预构建镜像
+
+```bash
+# 首先在项目目录构建镜像
+# 在项目目录中执行：
+docker-compose -f build/docker-compose.build.yml build
+
+# 然后将docker-compose.yml文件复制到任意目录：
+mkdir -p ~/mihomo-service
+cp build/docker-compose.yml ~/mihomo-service/
+cd ~/mihomo-service
+
+# 在新目录中启动服务：
+docker-compose up -d
+```
+
+可以通过环境变量自定义文件路径：
+
+```bash
+MIHOMO_DATA_DIR=/path/to/data \
+MIHOMO_CONFIG_FILE=/path/to/config.yaml \
+docker-compose up -d
+```
+
+详细的Docker部署说明请参考 [Docker部署指南](docs/docker-guide.md)
+
+### 系统直接安装（可选）
+
+如果不想使用Docker，也可以直接在系统中安装：
 
 - Linux系统（已在Ubuntu、Debian上测试）
 - Python 3.6+
 - Mihomo（Clash.Meta）已配置为系统服务
 
-### 步骤一：下载代码
+#### 步骤一：下载代码
 
 ```bash
 git clone https://github.com/zztdandan/mihomo-updater.git
 cd mihomo-updater
 ```
 
-### 步骤二：安装环境
+#### 步骤二：安装环境
 
 运行安装脚本来配置所需的环境：
 
@@ -46,7 +92,7 @@ sudo ./install.sh
 - 安装Python、Node.js和其他依赖
 - 安装项目的Python依赖
 
-### 步骤三：前端构建
+#### 步骤三：前端构建
 
 ```bash
 cd frontend
@@ -55,7 +101,7 @@ npm run build
 cd ..
 ```
 
-### 步骤四：启动服务
+#### 步骤四：启动服务
 
 在开发环境中可以直接运行：
 
@@ -125,8 +171,8 @@ sudo systemctl start mihomo-updater.service
 
 启动服务后，可通过以下地址访问Web界面：
 
-- 开发模式: `http://your-server-ip:3000`
-- 生产模式: `http://your-server-ip:5000`
+- 前端界面: `http://your-server-ip:3000`
+- Yacd界面: `http://your-server-ip:8080`（如果使用Docker部署）
 
 ### Web界面功能
 
@@ -246,9 +292,10 @@ project-root/
 │   │   ├── frontend/     # 前端Docker配置
 │   │   └── backend/      # 后端Docker配置
 │   ├── scripts/          # 构建脚本
-│   ├── docker-compose.yml # Docker编排配置
+│   ├── docker-compose.yml # 用于运行的Docker Compose配置
+│   ├── docker-compose.build.yml # 用于构建的Docker Compose配置
 │   └── ...
-├── config/               # 应用配置文件
+├── data/                 # 数据目录(Docker挂载)
 └── docs/                 # 项目文档
     ├── README.md         # 详细文档
     ├── docker-guide.md   # Docker部署指南
@@ -269,11 +316,11 @@ bash build/scripts/install.sh
 bash build/scripts/prepare.sh
 ```
 
-### 使用Docker部署
+### 使用Docker部署（推荐）
 
 ```bash
-# 安装Docker和Docker Compose
-bash build/scripts/install-docker-compose.sh
+# 构建镜像
+docker-compose -f build/docker-compose.build.yml build
 
 # 启动服务
 docker-compose -f build/docker-compose.yml up -d

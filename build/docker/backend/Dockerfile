@@ -14,16 +14,19 @@ WORKDIR /app
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 复制依赖文件
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 # 安装依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制所有源文件
-COPY . .
+COPY backend/ .
 
 # 复制默认配置文件到/tmp
-COPY config.yaml /tmp/
+COPY backend/config.yaml /tmp/
+
+# 复制入口点脚本
+COPY build/docker/backend/docker-entrypoint.sh .
 
 # 创建日志目录
 RUN mkdir -p logs

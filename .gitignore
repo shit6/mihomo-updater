@@ -57,7 +57,6 @@ frontend/.DS_Store
 
 # Docker相关
 .docker/
-.dockerignore
 docker/.env
 
 # 系统文件

@@ -1,0 +1,40 @@
+# 通用忽略文件
+.git
+.github
+.gitignore
+.dockerignore
+.vscode
+.idea
+*.md
+LICENSE
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.DS_Store
+**/.env
+.venv
+**/venv
+env
+
+# 前端忽略
+**/node_modules
+**/dist
+**/build
+**/.npm
+**/.cache
+**/.eslintcache
+**/.next
+**/.nuxt
+**/.output
+**/*.log
+**/.coverage
+
+# 后端忽略
+**/*.log.*
+**/.pytest_cache
+**/.coverage
+**/.tox
+**/.eggs
+**/*.egg-info
+**/htmlcov 
