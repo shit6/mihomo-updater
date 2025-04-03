@@ -6,7 +6,7 @@
           <n-icon size="28" :color="isDarkMode ? '#63E2B7' : '#18A058'">
             <FlashOutline />
           </n-icon>
-          <span class="logo-text">Mihomo自动更新服务</span>
+          <span class="logo-text">{{isMobile ? 'Mihomo' : 'Mihomo自动更新服务'}}</span>
         </div>
         <div class="actions">
           <n-space>
@@ -48,6 +48,7 @@
         :collapsed="isMobile"
         :native-scrollbar="false"
         class="sider"
+        :show-trigger="isMobile ? false : 'arrow-circle'"
       >
         <n-menu
           :value="activeKey"
@@ -249,9 +250,21 @@ const menuOptions = computed<MenuOption[]>(() => [
   .header {
     padding: 0 16px;
   }
-
+  
   .content {
-    padding: 12px;
+    padding: 12px 8px;
+  }
+  
+  .content-wrapper {
+    padding: 0 4px;
+  }
+  
+  :deep(.n-data-table-th) {
+    font-size: 14px;
+  }
+  
+  :deep(.n-data-table-td) {
+    font-size: 14px;
   }
 }
 </style> 

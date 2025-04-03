@@ -1,26 +1,32 @@
 <template>
   <div class="config-container">
-    <n-card title="配置管理" :bordered="false">
-      <template #header-extra>
-        <n-space>
-          <n-button @click="resetForm" :disabled="isLoading">
-            <template #icon>
-              <n-icon>
-                <RefreshOutline />
-              </n-icon>
-            </template>
-            重置表单
-          </n-button>
-          <n-button type="primary" @click="saveConfig" :loading="isSaving">
-            <template #icon>
-              <n-icon>
-                <SaveOutline />
-              </n-icon>
-            </template>
-            保存配置
-          </n-button>
-        </n-space>
-      </template>
+    <n-card :bordered="false">
+      <!-- 使用自定义标题布局，在移动端下将标题和按钮分为两行 -->
+      <div class="card-header">
+        <div class="card-title">
+          <h3 class="title-text">配置管理</h3>
+        </div>
+        <div class="card-actions">
+          <n-space>
+            <n-button @click="resetForm" :disabled="isLoading">
+              <template #icon>
+                <n-icon>
+                  <RefreshOutline />
+                </n-icon>
+              </template>
+              重置表单
+            </n-button>
+            <n-button type="primary" @click="saveConfig" :loading="isSaving">
+              <template #icon>
+                <n-icon>
+                  <SaveOutline />
+                </n-icon>
+              </template>
+              保存配置
+            </n-button>
+          </n-space>
+        </div>
+      </div>
 
       <div v-if="isLoading" class="loading-wrapper">
         <n-spin size="large" />
@@ -30,13 +36,13 @@
           ref="formRef"
           :model="formData"
           :rules="rules"
-          label-placement="left"
-          label-width="auto"
+          :label-placement="isMobile ? 'top' : 'left'"
+          :label-width="isMobile ? 'auto' : '160px'"
           require-mark-placement="right-hanging"
-          :style="{ maxWidth: '850px' }"
+          :style="{ maxWidth: '100%' }"
         >
           <n-h3 prefix="bar">基本配置</n-h3>
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="配置拉取地址" path="fetch_url">
                 <n-input
@@ -52,12 +58,13 @@
                   :min="60"
                   :max="86400"
                   placeholder="请输入拉取间隔"
+                  style="width: 100%"
                 />
               </n-form-item>
             </n-grid-item>
           </n-grid>
 
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="GeoIP更新间隔（秒）" path="geoip_fetch_interval">
                 <n-input-number
@@ -65,6 +72,7 @@
                   :min="3600"
                   :max="2592000"
                   placeholder="请输入GeoIP更新间隔"
+                  style="width: 100%"
                 />
               </n-form-item>
             </n-grid-item>
@@ -75,13 +83,14 @@
                   :min="1"
                   :max="65535"
                   placeholder="请输入Web服务端口"
+                  style="width: 100%"
                 />
               </n-form-item>
             </n-grid-item>
           </n-grid>
 
           <n-h3 prefix="bar">文件路径配置</n-h3>
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="Mihomo配置文件路径" path="mihomo_config_path">
                 <n-input
@@ -101,7 +110,7 @@
           </n-grid>
 
           <n-h3 prefix="bar">GeoIP数据配置</n-h3>
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="GeoIP数据文件路径" path="geoip_path">
                 <n-input
@@ -120,7 +129,7 @@
             </n-grid-item>
           </n-grid>
 
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="MMDB数据文件路径" path="mmdb_path">
                 <n-input
@@ -134,7 +143,7 @@
           </n-grid>
 
           <n-h3 prefix="bar">下载地址配置</n-h3>
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="GeoIP下载地址" path="geoip_url">
                 <n-input
@@ -153,7 +162,7 @@
             </n-grid-item>
           </n-grid>
 
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="MMDB下载地址" path="mmdb_url">
                 <n-input
@@ -167,7 +176,7 @@
           </n-grid>
           
           <n-h3 prefix="bar">Yacd面板配置</n-h3>
-          <n-grid :cols="gridCols" :x-gap="24">
+          <n-grid :cols="gridCols" :x-gap="24" :y-gap="16">
             <n-grid-item>
               <n-form-item label="Yacd面板地址" path="yacd_url">
                 <n-input
@@ -192,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onMounted } from 'vue'
+import { computed, ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import {
   NCard,
   NButton,
@@ -219,6 +228,21 @@ const configStore = useConfigStore()
 const formRef = ref<FormInst | null>(null)
 const isLoading = ref(true)
 const isSaving = ref(false)
+const isMobile = ref(window.innerWidth <= 768)
+
+// 监听窗口大小变化
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  loadConfig()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
 // 默认配置
 const defaultForm: Config = {
@@ -348,10 +372,6 @@ const saveConfig = async () => {
     }
   })
 }
-
-onMounted(() => {
-  loadConfig()
-})
 </script>
 
 <style scoped>
@@ -359,10 +379,63 @@ onMounted(() => {
   min-height: 100%;
 }
 
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--n-border-color);
+}
+
+.title-text {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
 .loading-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 200px;
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+  }
+  
+  .card-title {
+    margin-bottom: 12px;
+  }
+  
+  .card-actions {
+    width: 100%;
+  }
+  
+  :deep(.n-form-item-label) {
+    padding-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  :deep(.n-form-item) {
+    margin-bottom: 18px;
+  }
+  
+  :deep(.n-input-number) {
+    width: 100% !important;
+  }
+  
+  :deep(.n-form-item-feedback-wrapper) {
+    min-height: 20px;
+  }
+  
+  :deep(.n-h3) {
+    font-size: 16px;
+    margin-top: 18px;
+    margin-bottom: 12px;
+  }
 }
 </style> 

@@ -117,30 +117,91 @@
           <!-- 配置信息 -->
           <n-grid-item :span="gridCols">
             <n-card title="配置信息" size="small">
-              <n-descriptions bordered label-placement="left" :column="detailsCols">
-                <n-descriptions-item label="Mihomo配置文件">
-                  {{ config.mihomo_config_path || '-' }}
-                </n-descriptions-item>
-                <n-descriptions-item label="备份目录">
-                  {{ config.backup_dir || '-' }}
-                </n-descriptions-item>
-                <n-descriptions-item label="配置拉取间隔">
-                  {{ formatInterval(config.fetch_interval) || '-' }}
-                </n-descriptions-item>
-                <n-descriptions-item label="GeoIP更新间隔">
-                  {{ formatInterval(config.geoip_fetch_interval) || '-' }}
-                </n-descriptions-item>
-                <n-descriptions-item label="Yacd地址">
-                  <n-button text tag="a" :href="config.yacd_url" target="_blank">
-                    {{ config.yacd_url || '-' }}
-                  </n-button>
-                </n-descriptions-item>
-                <n-descriptions-item label="API地址">
-                  <n-button text tag="a" :href="config.clash_api_url" target="_blank">
-                    {{ config.clash_api_url || '-' }}
-                  </n-button>
-                </n-descriptions-item>
-              </n-descriptions>
+              <n-space vertical size="medium">
+                <n-grid :cols="detailsCols" :x-gap="16" :y-gap="16">
+                  <n-grid-item>
+                    <n-thing title="Mihomo配置文件" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <DocumentTextOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-text>{{ config.mihomo_config_path || '-' }}</n-text>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                  
+                  <n-grid-item>
+                    <n-thing title="备份目录" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <FolderOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-text>{{ config.backup_dir || '-' }}</n-text>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                  
+                  <n-grid-item>
+                    <n-thing title="配置拉取间隔" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <TimeOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-text>{{ formatInterval(config.fetch_interval) || '-' }}</n-text>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                  
+                  <n-grid-item>
+                    <n-thing title="GeoIP更新间隔" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <TimeOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-text>{{ formatInterval(config.geoip_fetch_interval) || '-' }}</n-text>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                  
+                  <n-grid-item>
+                    <n-thing title="Yacd地址" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <LinkOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-button text tag="a" :href="config.yacd_url" target="_blank">
+                          {{ config.yacd_url || '-' }}
+                        </n-button>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                  
+                  <n-grid-item>
+                    <n-thing title="API地址" :content-style="{ marginTop: '8px' }">
+                      <template #icon>
+                        <n-icon size="20" :color="isDarkMode ? '#63E2B7' : '#18A058'">
+                          <ServerOutline />
+                        </n-icon>
+                      </template>
+                      <template #description>
+                        <n-button text tag="a" :href="config.clash_api_url" target="_blank">
+                          {{ config.clash_api_url || '-' }}
+                        </n-button>
+                      </template>
+                    </n-thing>
+                  </n-grid-item>
+                </n-grid>
+              </n-space>
             </n-card>
           </n-grid-item>
         </n-grid>
@@ -150,7 +211,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
 import {
   NCard,
   NButton,
@@ -163,6 +224,7 @@ import {
   NIcon,
   NSpin,
   NText,
+  NThing,
   useMessage
 } from 'naive-ui'
 import {
@@ -171,7 +233,12 @@ import {
   CloseOutline,
   CloudDownloadOutline,
   GlobeOutline,
-  FolderOpenOutline
+  FolderOpenOutline,
+  DocumentTextOutline,
+  FolderOutline,
+  TimeOutline,
+  LinkOutline,
+  ServerOutline
 } from '@vicons/ionicons5'
 import { useConfigStore } from '@/stores/config'
 import { useHistoryStore } from '@/stores/history'
@@ -187,16 +254,12 @@ const updatingMihomo = ref(false)
 const updatingGeo = ref(false)
 const importingYaml = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
+const isMobile = ref(window.innerWidth <= 768)
 
-// 根据屏幕宽度调整网格列数
-const gridCols = computed(() => {
-  return window.innerWidth <= 768 ? 1 : 2
-})
-
-// 根据屏幕宽度调整描述列数
-const detailsCols = computed(() => {
-  return window.innerWidth <= 768 ? 1 : 2
-})
+// 监听窗口大小变化
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 768
+}
 
 // 获取配置
 const config = computed<Config>(() => configStore.config as Config)
@@ -245,6 +308,25 @@ const refreshData = async () => {
     isLoading.value = false
   }
 }
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  refreshData()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 根据屏幕宽度调整网格列数
+const gridCols = computed(() => {
+  return isMobile.value ? 1 : 2
+})
+
+// 根据屏幕宽度调整描述列数
+const detailsCols = computed(() => {
+  return isMobile.value ? 1 : 2
+})
 
 // 更新Mihomo配置
 const updateMihomoConfig = async () => {
@@ -304,14 +386,16 @@ const handleFileSelected = async (event: Event) => {
   }
 }
 
-onMounted(async () => {
-  await refreshData()
+// 暗色主题状态
+const isDarkMode = computed(() => {
+  // 判断是否为暗色主题（可以根据你的应用主题逻辑修改）
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 })
 </script>
 
 <style scoped>
 .home-container {
-  height: 100%;
+  min-height: 100%;
 }
 
 .welcome-card {
@@ -323,5 +407,35 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   min-height: 200px;
+}
+
+@media (max-width: 768px) {
+  .welcome-card {
+    margin-bottom: 8px;
+  }
+  
+  :deep(.n-descriptions-table-header) {
+    padding: 8px !important;
+  }
+  
+  :deep(.n-descriptions-table-content) {
+    padding: 8px !important;
+  }
+  
+  :deep(.n-card-header) {
+    padding: 12px 16px !important;
+  }
+  
+  :deep(.n-card__content) {
+    padding: 12px !important;
+  }
+  
+  :deep(.n-button) {
+    padding: 0 14px !important;
+  }
+  
+  :deep(.n-tag) {
+    padding: 0 6px !important;
+  }
 }
 </style> 

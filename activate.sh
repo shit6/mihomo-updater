@@ -4,7 +4,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # 虚拟环境路径
-VENV_PATH="${SCRIPT_DIR}/.venv"
+VENV_PATH="${SCRIPT_DIR}/backend/.venv"
 
 # 检查虚拟环境是否存在
 if [ ! -d "$VENV_PATH" ]; then
