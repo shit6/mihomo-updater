@@ -90,6 +90,26 @@
                   </template>
                   更新GeoIP数据
                 </n-button>
+                <n-button
+                  type="warning"
+                  block
+                  @click="selectLocalFile"
+                  :loading="importingYaml"
+                >
+                  <template #icon>
+                    <n-icon>
+                      <FolderOpenOutline />
+                    </n-icon>
+                  </template>
+                  从本地文件导入
+                </n-button>
+                <input 
+                  ref="fileInputRef" 
+                  type="file" 
+                  accept=".yaml,.yml" 
+                  style="display: none;" 
+                  @change="handleFileSelected" 
+                />
               </n-space>
             </n-card>
           </n-grid-item>
@@ -142,26 +162,31 @@ import {
   NTag,
   NIcon,
   NSpin,
-  NText
+  NText,
+  useMessage
 } from 'naive-ui'
 import {
   RefreshOutline,
   CheckmarkOutline,
   CloseOutline,
   CloudDownloadOutline,
-  GlobeOutline
+  GlobeOutline,
+  FolderOpenOutline
 } from '@vicons/ionicons5'
 import { useConfigStore } from '@/stores/config'
 import { useHistoryStore } from '@/stores/history'
-import { updateMihomo, updateGeoIP } from '@/api/updater'
+import { updateMihomo, updateGeoIP, importLocalYaml } from '@/api/updater'
 import { Config, TaskHistory } from '@/types'
 
 const configStore = useConfigStore()
 const historyStore = useHistoryStore()
+const message = useMessage()
 
 const isLoading = ref(true)
 const updatingMihomo = ref(false)
 const updatingGeo = ref(false)
+const importingYaml = ref(false)
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 // 根据屏幕宽度调整网格列数
 const gridCols = computed(() => {
@@ -227,6 +252,9 @@ const updateMihomoConfig = async () => {
   try {
     await updateMihomo()
     await historyStore.fetchHistory()
+    message.success('Mihomo配置更新成功')
+  } catch (error) {
+    message.error(`更新失败: ${(error as Error).message}`)
   } finally {
     updatingMihomo.value = false
   }
@@ -238,8 +266,41 @@ const updateGeoData = async () => {
   try {
     await updateGeoIP()
     await historyStore.fetchHistory()
+    message.success('GeoIP数据更新成功')
+  } catch (error) {
+    message.error(`更新失败: ${(error as Error).message}`)
   } finally {
     updatingGeo.value = false
+  }
+}
+
+// 选择本地文件
+const selectLocalFile = () => {
+  fileInputRef.value?.click()
+}
+
+// 处理选择的文件
+const handleFileSelected = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (!input.files || input.files.length === 0) {
+    return
+  }
+  
+  const file = input.files[0]
+  importingYaml.value = true
+  
+  try {
+    await importLocalYaml(file)
+    await historyStore.fetchHistory()
+    message.success('从本地文件导入配置成功')
+  } catch (error) {
+    message.error(`导入失败: ${(error as Error).message}`)
+  } finally {
+    importingYaml.value = false
+    // 重置文件输入框
+    if (fileInputRef.value) {
+      fileInputRef.value.value = ''
+    }
   }
 }
 

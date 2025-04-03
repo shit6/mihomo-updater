@@ -13,6 +13,9 @@ WORKDIR /app
 # 配置pip使用清华源
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
+# 设置时区为上海时区
+ENV TZ=Asia/Shanghai
+
 # 复制依赖文件
 COPY backend/requirements.txt .
 

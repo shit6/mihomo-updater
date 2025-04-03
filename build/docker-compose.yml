@@ -15,6 +15,7 @@ services:
       - ${MIHOMO_GEOIP_FILE:-/etc/mihomo/geoip.dat}:/etc/mihomo/geoip.dat
       - ${MIHOMO_GEOSITE_FILE:-/etc/mihomo/geosite.dat}:/etc/mihomo/geosite.dat
       - ${MIHOMO_COUNTRY_FILE:-/etc/mihomo/country.mmdb}:/etc/mihomo/country.mmdb
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - mihomo-network
 

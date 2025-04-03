@@ -249,6 +249,41 @@ def manual_update_mihomo():
     success = update_mihomo_config_job()
     return jsonify({"success": success, "message": "Mihomo配置更新" + ("成功" if success else "失败")})
 
+# API路由 - 从本地YAML文件导入配置
+@app.route('/api/import/local', methods=['POST'])
+def import_local_yaml():
+    """从本地YAML文件导入配置"""
+    try:
+        if 'file' not in request.files:
+            logger.error("未提供文件")
+            return jsonify({"success": False, "message": "未提供文件"}), 400
+        
+        yaml_file = request.files['file']
+        if yaml_file.filename == '':
+            logger.error("未选择文件")
+            return jsonify({"success": False, "message": "未选择文件"}), 400
+        
+        # 从上传的文件读取YAML内容
+        yaml_content = yaml_file.read().decode('utf-8')
+        logger.info(f"已上传本地YAML文件，大小: {len(yaml_content)}字节")
+        
+        # 解析YAML内容
+        from updater import MihomoUpdater
+        updater = MihomoUpdater()
+        success = updater.update_with_yaml_content(yaml_content)
+        
+        if success:
+            log_task_result("从本地文件导入配置", True)
+            return jsonify({"success": True, "message": "从本地文件导入配置成功"})
+        else:
+            log_task_result("从本地文件导入配置", False, "导入失败")
+            return jsonify({"success": False, "message": "从本地文件导入配置失败"}), 500
+            
+    except Exception as e:
+        logger.error(f"从本地文件导入配置失败: {e}")
+        log_task_result("从本地文件导入配置", False, str(e))
+        return jsonify({"success": False, "message": str(e)}), 500
+
 # API路由 - 手动触发GeoIP数据更新
 @app.route('/api/update/geoip', methods=['POST'])
 def manual_update_geoip():

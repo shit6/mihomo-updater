@@ -47,21 +47,16 @@ class MihomoUpdater:
             logger.error(f"获取远程配置失败: {e}")
             return None
 
-    def update_mihomo_config(self):
-        """更新Mihomo配置文件"""
+    def update_with_yaml_content(self, yaml_content):
+        """使用提供的YAML内容更新Mihomo配置文件"""
         try:
-            # 获取远程配置
-            logger.info("开始更新Mihomo配置")
-            remote_config_content = self.fetch_remote_config()
-            if not remote_config_content:
-                logger.error("无法获取远程配置，更新失败")
-                return False
+            logger.info("开始使用提供的YAML内容更新Mihomo配置")
             
-            # 解析远程配置
-            logger.info("正在解析远程配置")
-            remote_config = parse_yaml(remote_config_content)
+            # 解析提供的YAML内容
+            logger.info("正在解析提供的YAML内容")
+            remote_config = parse_yaml(yaml_content)
             if not remote_config:
-                logger.error("解析远程配置失败")
+                logger.error("解析提供的YAML内容失败")
                 return False
             
             # 读取当前的mihomo配置
@@ -110,6 +105,22 @@ class MihomoUpdater:
             self.restart_mihomo_service()
             
             return True
+        except Exception as e:
+            logger.error(f"使用提供的YAML内容更新Mihomo配置失败: {e}")
+            return False
+
+    def update_mihomo_config(self):
+        """更新Mihomo配置文件"""
+        try:
+            # 获取远程配置
+            logger.info("开始更新Mihomo配置")
+            remote_config_content = self.fetch_remote_config()
+            if not remote_config_content:
+                logger.error("无法获取远程配置，更新失败")
+                return False
+            
+            # 使用获取的YAML内容更新配置
+            return self.update_with_yaml_content(remote_config_content)
         except Exception as e:
             logger.error(f"更新Mihomo配置失败: {e}")
             return False

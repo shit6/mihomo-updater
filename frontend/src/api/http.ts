@@ -51,7 +51,14 @@ export function get<T = any>(url: string, params?: any): Promise<ApiResponse<T>>
 }
 
 // POST请求
-export function post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
+export function post<T = any>(url: string, data?: any, isFormData = false): Promise<ApiResponse<T>> {
+  if (isFormData) {
+    return instance.post(url, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
   return instance.post(url, data)
 }
 
