@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build: 
-      context: ..
+      context: ..  # 使用父目录作为构建上下文
       dockerfile: build/docker/backend/Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
@@ -12,9 +12,12 @@ services:
 
   frontend:
     build: 
-      context: ..
+      context: ..  # 使用父目录作为构建上下文
       dockerfile: build/docker/frontend/Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
         - DOCKER_BUILDKIT=1
-    image: mihomo-updater-frontend:latest 
+    image: mihomo-updater-frontend:latest
+
+# 使用方法：
+# docker-compose -f build/docker-compose.build.yml build 

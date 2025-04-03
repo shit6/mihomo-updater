@@ -15,6 +15,13 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 设置时区为上海时区
 ENV TZ=Asia/Shanghai
+# 安装tzdata并设置时区
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
 COPY backend/requirements.txt .
@@ -29,7 +36,7 @@ COPY backend/ .
 COPY backend/config.yaml /tmp/
 
 # 复制入口点脚本
-COPY build/docker/backend/docker-entrypoint.sh .
+COPY build/docker/backend/docker-entrypoint.sh ./
 
 # 创建日志目录
 RUN mkdir -p logs

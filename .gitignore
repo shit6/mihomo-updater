@@ -86,4 +86,10 @@ pnpm-debug.log*
 .env.local
 .env.development.local
 .env.test.local
-.env.production.local 
+.env.production.local
+
+# 不忽略重要的构建文件
+!build/docker/**/*.sh
+!build/docker/**/*.conf
+!build/scripts/**/*.sh
+!activate.sh 

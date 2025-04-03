@@ -20,7 +20,8 @@ env
 # 前端忽略
 **/node_modules
 **/dist
-**/build
+# 移除build目录忽略，避免忽略项目build/目录
+# **/build
 **/.npm
 **/.cache
 **/.eslintcache
@@ -37,4 +38,13 @@ env
 **/.tox
 **/.eggs
 **/*.egg-info
-**/htmlcov 
+**/htmlcov
+
+# 不忽略重要的构建文件
+!build/
+!build/docker/
+!build/docker/**/*.sh
+!build/docker/**/*.conf
+!build/scripts/
+!build/scripts/**/*.sh
+!activate.sh 

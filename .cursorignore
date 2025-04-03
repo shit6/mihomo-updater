@@ -1,0 +1,13 @@
+# 通用忽略
+.git/
+.vscode/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# 不忽略重要的构建文件
+!build/docker/**/*.sh
+!build/docker/**/*.conf
+!build/scripts/**/*.sh
+!activate.sh

@@ -22,7 +22,17 @@ RUN npm run build
 # 阶段2: 运行阶段 - 使用轻量级nginx来提供静态文件
 FROM nginx:alpine
 
-# 复制nginx配置
+# 设置上海时区
+ENV TZ=Asia/Shanghai
+# 安装tzdata并设置时区
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    apk del tzdata
+# 创建目录确保存在
+RUN mkdir -p /etc/nginx/conf.d
+
+# 将当前目录下的nginx.conf复制到容器中
 COPY build/docker/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # 从构建阶段复制构建结果
