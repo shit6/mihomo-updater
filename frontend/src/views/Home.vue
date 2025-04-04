@@ -211,7 +211,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import {
   NCard,
   NButton,

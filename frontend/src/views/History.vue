@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import {
   NCard,
   NButton,
@@ -106,8 +106,7 @@ import {
   NPagination,
   NThing,
   NSelect,
-  NEllipsis,
-  SelectOption
+  NEllipsis
 } from 'naive-ui'
 import { 
   RefreshOutline, 
