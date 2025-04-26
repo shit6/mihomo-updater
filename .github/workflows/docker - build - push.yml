@@ -25,6 +25,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: build/Dockerfile
+          file: build/docker/backend/Dockerfile 
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/mihomo-updater:latest
